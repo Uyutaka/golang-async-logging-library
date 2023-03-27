@@ -28,8 +28,13 @@ func New(w io.Writer) *Alog {
 	if w == nil {
 		w = os.Stdout
 	}
+	msgCh := make(chan string)
+	errorCh := make(chan error)
+
 	return &Alog{
-		dest: w,
+		dest:    w,
+		msgCh:   msgCh,
+		errorCh: errorCh,
 	}
 }
 
