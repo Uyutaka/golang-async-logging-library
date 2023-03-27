@@ -48,8 +48,18 @@ func New(w io.Writer) *Alog {
 // the caller from being blocked.
 func (al Alog) Start() {
 	for {
-		msg := <-al.msgCh
-		go al.write(msg, nil)
+		// msg := <-al.msgCh
+		// go al.write(msg, nil)
+		// shutdownMsg := <-al.shutdownCh
+		// al.shutdown()
+
+		select {
+		case msg := <-al.msgCh:
+			go al.write(msg, nil)
+		case <-al.shutdownCh:
+			al.shutdown()
+			return
+		}
 	}
 }
 
