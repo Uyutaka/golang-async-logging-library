@@ -31,12 +31,16 @@ func New(w io.Writer) *Alog {
 	msgCh := make(chan string)
 	errorCh := make(chan error)
 	var m sync.Mutex
+	shutdownCh := make(chan struct{})
+	shutdownCompleteCh := make(chan struct{})
 
 	return &Alog{
-		dest:    w,
-		m:       &m,
-		msgCh:   msgCh,
-		errorCh: errorCh,
+		dest:               w,
+		m:                  &m,
+		msgCh:              msgCh,
+		errorCh:            errorCh,
+		shutdownCh:         shutdownCh,
+		shutdownCompleteCh: shutdownCompleteCh,
 	}
 }
 
@@ -70,6 +74,8 @@ func (al Alog) write(msg string, wg *sync.WaitGroup) error {
 }
 
 func (al Alog) shutdown() {
+	close(al.msgCh)
+	al.shutdownCompleteCh <- struct{}{}
 }
 
 // MessageChannel returns a channel that accepts messages that should be written to the log.
