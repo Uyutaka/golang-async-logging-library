@@ -51,8 +51,13 @@ func (al Alog) formatMessage(msg string) string {
 	return fmt.Sprintf("[%v] - %v", time.Now().Format("2006-01-02 15:04:05"), msg)
 }
 
-func (al Alog) write(msg string, wg *sync.WaitGroup) {
-	al.dest.Write([]byte(al.formatMessage(msg)))
+func (al Alog) write(msg string, wg *sync.WaitGroup) error {
+	_, err := al.dest.Write([]byte(al.formatMessage(msg)))
+	if err != nil {
+		al.errorCh <- err
+		return err
+	}
+	return nil
 }
 
 func (al Alog) shutdown() {
