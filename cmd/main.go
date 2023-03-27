@@ -1,7 +1,6 @@
 package main
 
 import (
-	"alog"
 	"bufio"
 	"flag"
 	"fmt"
@@ -9,6 +8,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/uyutaka/alog"
 )
 
 func main() {
